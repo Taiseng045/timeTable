@@ -3,161 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full-Day Schedule</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Daily Schedule</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5998/5998948.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
-        .table {
+        body {
+            transition: background-color 0.5s ease;
+        }
+        .morning {
+            background-color: #fffacd; /* Light yellow */
+        }
+        .midday {
+            background-color: #ffebcd; /* Blanched almond */
+        }
+        .afternoon {
+            background-color: #e0ffff; /* Light cyan */
+        }
+        .evening {
+            background-color: #ffcccb; /* Light red */
+        }
+        .bedtime {
+            background-color: #dcdcdc; /* Light gray */
+        }
+        .content {
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn-container {
             margin-top: 20px;
         }
-        .section-title {
+        .hidden {
+            display: none;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        h3.section-title {
+            padding: 10px;
+            color: white;
             font-weight: bold;
-            background-color: #f8f9fa;
-            text-align: center;
         }
     </style>
 </head>
 <body>
+    <div class="container mt-1 text-center">
+        <div style="display: flex;justify-content: space-between; align-items: center; padding: 0px 20px 20px 20px;" class="">
+            <div style="border-radius: 50%; background-color: white; width: 150px;height: 150px; display: flex;justify-content: center;align-items: center;" class="">
+                <h2 id="time" class="">Loading...</h2>
+            </div>
+            <div>
+                <h1>Daily Work</h1>
+            </div>
+        </div>
+        <div id="schedule" class="content">
+            <!-- Current time block schedule will load here -->
+        </div>
+        <div class="btn-container">
+            <button id="showAllBtn" class="btn btn-dark mb-5">Show All Schedule</button>
+            <button id="returnBtn" class="btn btn-dark hidden">Return</button>
+        </div>
+        <div id="fullSchedule" class="content mt-4 hidden">
+            <!-- Full schedule content (as a table) will be loaded here -->
+        </div>
+        
+    </div>
 
-<div class="container mt-5">
-    <h1 class="text-center">Your Full-Day Schedule</h1>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const schedule = {
+                morning: [
+                    { time: "6:30 AM", activity: "Wake Up: Drink water, freshen up, and do a light stretch or yoga." },
+                    { time: "6:50 AM", activity: "Enjoy Your Morning Treat: Sip your favorite drink and have a light snack." },
+                    { time: "7:00 AM", activity: "Personal Time: Dive into a passion project (like journaling, vlogging, or brainstorming ideas). Optionally, plan your day or reflect on goals." },
+                    { time: "7:30 AM", activity: "Focus on Productivity: Begin with one important task, such as studying, reviewing notes, or progressing on a hobby." },
+                    { time: "8:00 AM", activity: "Breakfast & Energy Boost: Have a nutritious breakfast. Listen to a podcast, read a book, or simply relax." },
+                    { time: "8:30 AM", activity: "Transition to Daily Activities: Get ready for classes, work, or errands." }
+                ],
+                midday: [
+                    { time: "9:00 AM", activity: "Work/Study Block 1: Focus on important academic or personal projects for 1–2 hours." },
+                    { time: "11:00 AM", activity: "Short Break (10–15 Minutes): Stretch, hydrate, or check in on social media briefly." },
+                    { time: "11:15 AM", activity: "Work/Study Block 2: Continue productive work or attend classes if scheduled." },
+                    { time: "12:30 PM", activity: "Lunch Break: Eat something satisfying and take your time to enjoy it. Step outside if possible, or do something relaxing like light reading." }
+                ],
+                afternoon: [
+                    { time: "1:30 PM", activity: "Active Break: Take a short walk, do light exercise, or clean/tidy your space for 20–30 minutes." },
+                    { time: "2:00 PM", activity: "Creative or Learning Time: Explore a subject or hobby you’re passionate about (e.g., research for your vlogs, learn a skill, or study)." },
+                    { time: "3:30 PM", activity: "Work/Study Block 3: Finish off any academic or work tasks you have left." },
+                    { time: "4:30 PM", activity: "Afternoon Snack/Break: Grab a light snack, drink some tea or coffee, and relax." },
+                    { time: "5:00 PM", activity: "Social or Hobby Time: Connect with friends or work on a creative project like vlogging or exploring beauty content." }
+                ],
+                evening: [
+                    { time: "6:30 PM", activity: "Dinner: Enjoy a balanced meal, ideally away from screens to give your mind a break." },
+                    { time: "7:30 PM", activity: "Wind-Down Activity: Do something calming: watch a show, read, or listen to music." },
+                    { time: "8:30 PM", activity: "Planning & Reflection: Review your day, write in a journal, or set goals for tomorrow." },
+                    { time: "9:00 PM", activity: "Light Prep for Bed: Prepare for sleep: wash up, change into comfy clothes, and tidy your space." },
+                    { time: "9:30 PM", activity: "Relaxation Time: Do something soothing like meditation, listening to soft music, or reading." },
+                    { time: "10:00 PM", activity: "Sleep: Aim for 7–8 hours of quality sleep to feel rested and ready for the next day." }
+                ]
+            };
 
-    <!-- Morning Schedule Table -->
-    <h3 class="section-title mt-4">Morning</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Activity</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>6:30 AM</td>
-                <td>Wake Up: Drink water, freshen up, and do a light stretch or yoga.</td>
-            </tr>
-            <tr>
-                <td>6:50 AM</td>
-                <td>Enjoy Your Morning Treat: Sip your favorite drink and have a light snack.</td>
-            </tr>
-            <tr>
-                <td>7:00 AM</td>
-                <td>Personal Time: Dive into a passion project (like journaling, vlogging, or brainstorming ideas). Optionally, plan your day or reflect on goals.</td>
-            </tr>
-            <tr>
-                <td>7:30 AM</td>
-                <td>Focus on Productivity: Begin with one important task, such as studying, reviewing notes, or progressing on a hobby.</td>
-            </tr>
-            <tr>
-                <td>8:00 AM</td>
-                <td>Breakfast & Energy Boost: Have a nutritious breakfast. Listen to a podcast, read a book, or simply relax.</td>
-            </tr>
-            <tr>
-                <td>8:30 AM</td>
-                <td>Transition to Daily Activities: Get ready for classes, work, or errands.</td>
-            </tr>
-        </tbody>
-    </table>
+            function updateThemeAndContent() {
+                const now = new Date();
+                const hour = now.getHours();
+                const timeEl = document.getElementById("time");
+                const scheduleEl = document.getElementById("schedule");
 
-    <!-- Midday Schedule Table -->
-    <h3 class="section-title mt-4">Midday</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Activity</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>9:00 AM</td>
-                <td>Work/Study Block 1: Focus on important academic or personal projects for 1–2 hours.</td>
-            </tr>
-            <tr>
-                <td>11:00 AM</td>
-                <td>Short Break (10–15 Minutes): Stretch, hydrate, or check in on social media briefly.</td>
-            </tr>
-            <tr>
-                <td>11:15 AM</td>
-                <td>Work/Study Block 2: Continue productive work or attend classes if scheduled.</td>
-            </tr>
-            <tr>
-                <td>12:30 PM</td>
-                <td>Lunch Break: Eat something satisfying and take your time to enjoy it. Step outside if possible, or do something relaxing like light reading.</td>
-            </tr>
-        </tbody>
-    </table>
+                timeEl.textContent = now.toLocaleTimeString();
 
-    <!-- Afternoon Schedule Table -->
-    <h3 class="section-title mt-4">Afternoon</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Activity</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1:30 PM</td>
-                <td>Active Break: Take a short walk, do light exercise, or clean/tidy your space for 20–30 minutes.</td>
-            </tr>
-            <tr>
-                <td>2:00 PM</td>
-                <td>Creative or Learning Time: Explore a subject or hobby you’re passionate about (e.g., research for your vlogs, learn a skill, or study).</td>
-            </tr>
-            <tr>
-                <td>3:30 PM</td>
-                <td>Work/Study Block 3: Finish off any academic or work tasks you have left.</td>
-            </tr>
-            <tr>
-                <td>4:30 PM</td>
-                <td>Afternoon Snack/Break: Grab a light snack, drink some tea or coffee, and relax.</td>
-            </tr>
-            <tr>
-                <td>5:00 PM</td>
-                <td>Social or Hobby Time: Connect with friends or work on a creative project like vlogging or exploring beauty content.</td>
-            </tr>
-        </tbody>
-    </table>
+                let period = "";
+                if (hour >= 6 && hour < 9) period = "morning";
+                else if (hour >= 9 && hour < 12) period = "midday";
+                else if (hour >= 12 && hour < 17) period = "afternoon";
+                else if (hour >= 17 && hour < 21) period = "evening";
+                else period = "bedtime";
 
-    <!-- Evening Schedule Table -->
-    <h3 class="section-title mt-4">Evening</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Activity</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>6:30 PM</td>
-                <td>Dinner: Enjoy a balanced meal, ideally away from screens to give your mind a break.</td>
-            </tr>
-            <tr>
-                <td>7:30 PM</td>
-                <td>Wind-Down Activity: Do something calming: watch a show, read, or listen to music.</td>
-            </tr>
-            <tr>
-                <td>8:30 PM</td>
-                <td>Planning & Reflection: Review your day, write in a journal, or set goals for tomorrow.</td>
-            </tr>
-            <tr>
-                <td>9:00 PM</td>
-                <td>Light Prep for Bed: Prepare for sleep: wash up, change into comfy clothes, and tidy your space.</td>
-            </tr>
-            <tr>
-                <td>9:30 PM</td>
-                <td>Relaxation Time: Do something soothing like meditation, listening to soft music, or reading.</td>
-            </tr>
-            <tr>
-                <td>10:00 PM</td>
-                <td>Sleep: Aim for 7–8 hours of quality sleep to feel rested and ready for the next day.</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                document.body.className = period;
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+                scheduleEl.innerHTML = schedule[period]
+                    .map(item => `<p><strong>${item.time}</strong>: ${item.activity}</p>`)
+                    .join("");
+            }
+
+            function showFullSchedule() {
+                const fullScheduleEl = document.getElementById("fullSchedule");
+                const scheduleEl = document.getElementById("schedule");
+                const showAllBtn = document.getElementById("showAllBtn");
+                const returnBtn = document.getElementById("returnBtn");
+
+                fullScheduleEl.classList.remove("hidden");
+                scheduleEl.classList.add("hidden");
+                showAllBtn.classList.add("hidden");
+                returnBtn.classList.remove("hidden");
+
+                // Insert the detailed schedule tables with custom content
+                fullScheduleEl.innerHTML = `
+                    <h3 style="background-color: #F5EFFF;" class="section-title text-dark mt-4 p-3">Morning</h3>
+                    <table style="background-color: #F5EFFF;" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${schedule.morning.map(item => `
+                                <tr>
+                                    <td>${item.time}</td>
+                                    <td>${item.activity}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                    <h3 style="background-color: #FFF0DC;" class="section-title mt-4 p-3 text-dark">Midday</h3>
+                    <table style="background-color: #FFF0DC;" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${schedule.midday.map(item => `
+                                <tr>
+                                    <td>${item.time}</td>
+                                    <td>${item.activity}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                    <h3 style="background-color: #FAB12F;" class="section-title mt-4 p-3">Afternoon</h3>
+                    <table style="background-color: #FAB12F;" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${schedule.afternoon.map(item => `
+                                <tr>
+                                    <td>${item.time}</td>
+                                    <td>${item.activity}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                    <h3 style="background-color: #181C14;" class="section-title mt-4 p-3">Evening</h3>
+                    <table style="background-color: #181C14;" class="table text-light table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${schedule.evening.map(item => `
+                                <tr>
+                                    <td>${item.time}</td>
+                                    <td>${item.activity}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            function returnToCurrent() {
+                const fullScheduleEl = document.getElementById("fullSchedule");
+                const scheduleEl = document.getElementById("schedule");
+                const showAllBtn = document.getElementById("showAllBtn");
+                const returnBtn = document.getElementById("returnBtn");
+
+                fullScheduleEl.classList.add("hidden");
+                scheduleEl.classList.remove("hidden");
+                showAllBtn.classList.remove("hidden");
+                returnBtn.classList.add("hidden");
+
+                updateThemeAndContent();
+            }
+
+            document.getElementById("showAllBtn").addEventListener("click", showFullSchedule);
+            document.getElementById("returnBtn").addEventListener("click", returnToCurrent);
+
+            updateThemeAndContent();
+            setInterval(updateThemeAndContent, 60000); // Update every minute
+        });
+    </script>
 </body>
 </html>
